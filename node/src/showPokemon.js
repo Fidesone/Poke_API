@@ -1,5 +1,8 @@
 import { getAllPokemons, getMuestraHabilidades } from './getPokemon.js';
-
+import { prevPage, nextPage } from './pages.js';
+const POKEMONS_PER_PAGE = 20;
+let currentPage = 1;
+let totalPages = 0;
 let listaPokemonvisible = false;
 let listaPokemonhabilidades = false;
 
@@ -13,11 +16,19 @@ document.addEventListener('DOMContentLoaded', async function(event) {
     try {
       const pokemons = await getAllPokemons();
 
+      // Calculamos el número total de páginas en base al número de Pokémon
+      totalPages = Math.ceil(pokemons.length / POKEMONS_PER_PAGE);
+
+      // Mostramos solo los Pokémon de la página actual
+      const start = (currentPage - 1) * POKEMONS_PER_PAGE;
+      const end = start + POKEMONS_PER_PAGE;
+      const pokemonPage = pokemons.slice(start, end);
+
       const pokemonListEl = document.getElementById('pokemon-list');
       pokemonListEl.innerHTML = ''; // limpiamos el contenido previo
 
     
-      for (const pokemon of pokemons) {
+      for (const pokemon of pokemonPage) {
         const pokemonLiEl = document.createElement('li');
         const pokemonBtnEl = document.createElement('button');
         pokemonBtnEl.textContent = pokemon.name;
@@ -93,3 +104,9 @@ function muestraHabilidadesPokemon() {
     listaPokemonhabilidades = true;
   }
 }
+
+const nextButton = document.getElementById('next-button');
+nextButton.addEventListener('click', nextPage);
+
+const prevButton = document.getElementById('prev-button');
+prevButton.addEventListener('click', prevPage);
